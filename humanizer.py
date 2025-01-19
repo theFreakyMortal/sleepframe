@@ -12,5 +12,6 @@ def on_press(key):
         print(f"Elapsed time: {elapsed_time} seconds")
     crntTime = time.time()
 
-with keyboard.Listener(on_press=on_press, on_release=on_press) as listener: 
-    listener.join()                                                     
+if __name__ == "__main__":
+    with keyboard.Listener(on_press=on_press, on_release=on_press) as listener: 
+        listener.join()                                                     
