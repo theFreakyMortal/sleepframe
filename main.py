@@ -1,5 +1,4 @@
 import os
-import importlib.util
 
 def find_modules(directory):
     modules = {}
