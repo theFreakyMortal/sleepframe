@@ -1,11 +1,15 @@
 import time
 import random
 import threading
+import pyautogui
+import pytesseract
 from pynput import keyboard
 from pynput.keyboard import Controller
 
 keyboard_controller = Controller()
 status = False
+frame = False
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 def flipflop(key):
     global status
@@ -14,6 +18,17 @@ def flipflop(key):
             status = not status
     except AttributeError:
         pass
+
+def scan_screenshot():
+    while True:
+        if status:
+            screenshot = pyautogui.screenshot(region=(1475, 135, 290, 50))
+            text = pytesseract.image_to_string(screenshot)
+            if "EXCALIBUR UMBRA" in text:
+                frame = True
+            else:
+                frame = False
+        time.sleep(0.1)
 
 def walk():
     while True:
@@ -27,7 +42,7 @@ def walk():
 
 def protect():
     while True:
-        if status:
+        if status and not frame:
             keyboard_controller.press(' ')
             time.sleep(random.uniform(0.02, 0.04))
             keyboard_controller.release(' ')
@@ -35,33 +50,24 @@ def protect():
             keyboard_controller.press(' ')
             time.sleep(random.uniform(0.02, 0.04))
             keyboard_controller.release(' ')
-            time.sleep(random.uniform(4.6, 4.9))
+            time.sleep(random.uniform(4.5, 4.8))
         time.sleep(0.1)
 
-def anti_afk():
+def changer():
     while True:
-        if status:
+        if frame:
             keyboard_controller.press('5')
             time.sleep(random.uniform(0.02, 0.04))
             keyboard_controller.release('5')
-            time.sleep(random.uniform(0.9, 1.1))
-            keyboard_controller.press('5')
-            time.sleep(random.uniform(0.02, 0.04))
-            keyboard_controller.release('5')
-            time.sleep(random.uniform(25, 35))
+            time.sleep(random.uniform(0.13, 0.16))
         time.sleep(0.1)
 
-def printer():
-    while True:
-        print("Status: ", status)
-        time.sleep(1)
-    
 def main():
     threads = []
-    threads.append(threading.Thread(target=printer))
+    threads.append(threading.Thread(target=changer))
     threads.append(threading.Thread(target=walk))
     threads.append(threading.Thread(target=protect))
-    threads.append(threading.Thread(target=anti_afk))
+    threads.append(threading.Thread(target=scan_screenshot))
 
     for thread in threads:
         thread.start()
