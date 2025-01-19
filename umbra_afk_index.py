@@ -20,14 +20,17 @@ def flipflop(key):
         pass
 
 def scan_screenshot():
+    global frame
     while True:
         if status:
             screenshot = pyautogui.screenshot(region=(1475, 135, 290, 50))
             text = pytesseract.image_to_string(screenshot)
             if "EXCALIBUR UMBRA" in text:
                 frame = True
+                print("Umbra detected")
             else:
                 frame = False
+                print("Umbra not detected")
         time.sleep(0.1)
 
 def walk():
@@ -53,6 +56,15 @@ def protect():
             time.sleep(random.uniform(4.5, 4.8))
         time.sleep(0.1)
 
+def anti_afk():
+    while True:
+        if status:
+            keyboard_controller.press('5')
+            time.sleep(random.uniform(0.02, 0.04))
+            keyboard_controller.release('5')
+            time.sleep(random.uniform(13, 17))
+        time.sleep(0.1)
+
 def changer():
     while True:
         if frame:
@@ -64,6 +76,7 @@ def changer():
 
 def main():
     threads = []
+    threads.append(threading.Thread(target=anti_afk))
     threads.append(threading.Thread(target=changer))
     threads.append(threading.Thread(target=walk))
     threads.append(threading.Thread(target=protect))
